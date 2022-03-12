@@ -3,10 +3,11 @@ This Server will serve as master server for all projects.
 It will call project specific sctipts from scripts folder based on project requirement and name recived in request json.
 """
 
-from flask import Flask
+from flask import Flask, jsonify
 from waitress import serve
 from jproperties import Properties
 from flask import request
+from sys import exc_info
 
 app = Flask('__main__')
 
@@ -44,9 +45,24 @@ def execute_exercise():
         "requiredDF": ''
     }
     """
-    data_values = call_method(request.json['scriptName'], 'exchange_rate', request.json)
-    response = {'return_code': 0, 'message': 'Success', 'data': data_values}
-    return response
+    try:
+        data_values = call_method(request.json['scriptName'], 'exchange_rate', request.json)
+        response = {'return_code': 0,
+            'message': 'Success', 
+            'data': data_values 
+        }
+        return jsonify(response)
+    except Exception as exe:
+        a,b,c =exc_info()
+        print('error in line no::',str(c.tb_lineno))
+        print(a)
+        print(b)
+        return_json = {
+            'return_code': 1,
+            'message': 'failed operation',
+            'data': str(c.tb_lineno)
+        }
+        return jsonify(return_json)
 
 def call_method(script, name, request_json):
     """
