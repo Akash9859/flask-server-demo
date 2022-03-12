@@ -13,25 +13,34 @@ def init(configs):
     configs_dict = configs
 
 def exchange_rate(request_json):
+    """
+    This method will return json with html of response dataframe if operation is succesful.
+    In case of error, it will return error line number.
+    """
     try:
         df_part1 = get_exchange_rate(request_json,'GBP')
-        # return_json = {
-        #     'data': df_part1,
-        #     'status': 'succesful operation'
-        # }
-        return df_part1
+        return_json = {
+            'data': df_part1,
+            'status': 'succesful operation',
+            'code':0
+        }
+        return return_json
     except Exception as exe:
         a,b,c =exc_info()
         print('error in line no::',c.tb_lineno)
         print(a)
         print(b)
-        # return_json = {
-        #     'data': '',
-        #     'status': 'failed operation'
-        # }
-    return 'Failed Operation in exercise 1'
+        return_json = {
+            'data': str(c.tb_lineno),
+            'status': 'failed operation',
+            'code':1
+        }
+    return return_json
 
 def get_exchange_rate(request_json,contry_name,target="EUR"):
+    """
+    This method will do required operation and return dataframe of source and target conversion rate.
+    """
     try:
         modified_url = request_json['url'].replace('GBP',contry_name)
         response = requests.get(request_json['url'])

@@ -47,10 +47,14 @@ def execute_exercise():
     """
     try:
         data_values = call_method(request.json['scriptName'], 'exchange_rate', request.json)
-        response = {'return_code': 0,
-            'message': 'Success', 
-            'data': data_values 
-        }
+        if data_values['code']==0:
+            response = {'return_code': 0,
+                'message': 'Successful operation', 
+                'data': data_values['data']}
+        else:
+            response = {'return_code': 1,
+                'message': 'Execution of exercise 1 failed', 
+                'data': data_values['data']}
         return jsonify(response)
     except Exception as exe:
         a,b,c =exc_info()
@@ -59,7 +63,7 @@ def execute_exercise():
         print(b)
         return_json = {
             'return_code': 1,
-            'message': 'failed operation',
+            'message': 'server failed',
             'data': str(c.tb_lineno)
         }
         return jsonify(return_json)
