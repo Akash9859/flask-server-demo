@@ -41,8 +41,11 @@ def execute_exercise():
     }
 
     Return:
+    data_values['data'] is html of requested dataframe.
     {
-        "requiredDF": ''
+        {'return_code': 0,
+        'message': 'Successful operation', 
+        'data': data_values['data']}
     }
     """
     try:

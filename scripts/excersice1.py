@@ -18,7 +18,7 @@ def exchange_rate(request_json):
     In case of error, it will return error line number.
     """
     try:
-        df_part1 = get_exchange_rate(request_json,'GBP')
+        df_part1 = get_exchange_rate(request_json)
         return_json = {
             'data': df_part1,
             'status': 'succesful operation',
@@ -37,12 +37,12 @@ def exchange_rate(request_json):
         }
     return return_json
 
-def get_exchange_rate(request_json,contry_name,target="EUR"):
+def get_exchange_rate(request_json,target="EUR"):
     """
     This method will do required operation and return dataframe of source and target conversion rate.
     """
     try:
-        modified_url = request_json['url'].replace('GBP',contry_name)
+        # modified_url = request_json['url'].replace('GBP',contry_name)
         response = requests.get(request_json['url'])
         data = response.text
         tree = ET.ElementTree(ET.fromstring(data))
@@ -67,7 +67,7 @@ def get_exchange_rate(request_json,contry_name,target="EUR"):
         })
         df['OBS_VALUE']=pd.to_numeric(df["OBS_VALUE"])
         html_df = df.to_html()
-        print(html_df)
+        # print(html_df)
         return html_df
     except Exception as exe:
         a,b,c =exc_info()
