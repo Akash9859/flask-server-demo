@@ -8,6 +8,9 @@ from waitress import serve
 from jproperties import Properties
 from flask import request
 from sys import exc_info
+from Logger import LogConfig
+from Logger import Log
+import traceback
 
 app = Flask('__main__')
 
@@ -48,8 +51,10 @@ def execute_exercise():
         'data': data_values['data']}
     }
     """
+    brix_logger = Log.Log.get_logger()
     try:
         data_values = call_method(request.json['scriptName'], 'exchange_rate', request.json)
+        brix_logger.info("Response JSON:: " + str(data_values))
         if data_values['code']==0:
             response = {'return_code': 0,
                 'message': 'Successful operation', 
@@ -64,6 +69,8 @@ def execute_exercise():
         print('error in line no::',str(c.tb_lineno))
         print(a)
         print(b)
+        brix_logger.error("Script Name: ImporterConverterServer :: " + str(exe.args))
+        brix_logger.error(traceback.format_exc())
         return_json = {
             'return_code': 1,
             'message': 'server failed',
@@ -92,4 +99,5 @@ def call_method(script, name, request_json):
 
 if __name__ == '__main__':
     read_config()
+    LogConfig.LogConfig(config_dic).configure_log()
     app.run(debug=False,host=config_dic['host'],port = config_dic['port'])
